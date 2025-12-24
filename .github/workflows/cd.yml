@@ -1,13 +1,11 @@
+
+
 name: CD-Pipeline
 
 on:
   workflow_dispatch: {}           # manual trigger
   repository_dispatch:           # triggered from CI
     types: [ci-completed]
-  workflow_run:
-    workflows: ["CI-CD"]         # trigger after CI workflow run
-    types:
-      - completed
 
 permissions:
   id-token: write
@@ -26,6 +24,7 @@ jobs:
         if: github.event_name == 'repository_dispatch'
         run: |
           echo "IMAGE_TAG=${{ github.event.client_payload.image_tag }}" >> $GITHUB_ENV
+
       - name: Show image tag
         run: echo "Docker image to deploy: $IMAGE_TAG"
 
@@ -44,7 +43,6 @@ jobs:
             echo "EKS_EXISTS=true" >> $GITHUB_ENV
           else
             echo "EKS_EXISTS=false" >> $GITHUB_ENV
-          fi
 
       # 5️⃣ Deploy via ArgoCD (skipped for now)
       - name: Deploy via Argo CD
@@ -65,4 +63,3 @@ jobs:
       - name: Skip deploy
         if: env.EKS_EXISTS == 'false'
         run: echo "No EKS cluster found. Skipping CD deployment. Docker image $IMAGE_TAG is ready."
-
