@@ -41,10 +41,9 @@ jobs:
           echo "Testing Argo CD server URL..."
           curl -vk "${{ secrets.ARGOCD_SERVER }}/api/v1/version"
 
-      - name: Sync Argo CD App
+      - name: Login to Argo CD and sync app
         run: |
           echo "Logging in to Argo CD..."
-          # Wrap the URL and token in quotes to avoid parsing issues
           argocd login "${{ secrets.ARGOCD_SERVER }}" \
             --username ci-user \
             --password "${{ secrets.ARGOCD_CI_TOKEN }}" \
@@ -52,4 +51,6 @@ jobs:
             --grpc-web
 
           echo "Syncing demo app..."
+          argocd app sync demo
+
           argocd app sync demo
