@@ -9,6 +9,11 @@ nameSuffix: -prod
 commonLabels:
   env: prod
 
-replicas:
-  - name: demo-app
-    count: 3
+patchesStrategicMerge:
+  - |-
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: demo-app
+    spec:
+      replicas: 3
