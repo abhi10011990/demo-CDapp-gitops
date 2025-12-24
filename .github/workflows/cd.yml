@@ -25,7 +25,6 @@ jobs:
           chmod +x /tmp/argocd
           sudo mv /tmp/argocd /usr/local/bin/argocd
 
-
       - name: Setup AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
@@ -37,8 +36,20 @@ jobs:
         run: |
           aws eks update-kubeconfig --region ap-northeast-1 --name demo-eks-cluster
 
+      - name: Test Argo CD Server connectivity
+        run: |
+          echo "Testing Argo CD server URL..."
+          curl -vk "${{ secrets.ARGOCD_SERVER }}/api/v1/version"
+
       - name: Sync Argo CD App
         run: |
-          # Use any username, token is what matters
-          argocd login ${{ secrets.ARGOCD_SERVER }} --username ci-user --password ${{ secrets.ARGOCD_CI_TOKEN }} --insecure --grpc-web
+          echo "Logging in to Argo CD..."
+          # Wrap the URL and token in quotes to avoid parsing issues
+          argocd login "${{ secrets.ARGOCD_SERVER }}" \
+            --username ci-user \
+            --password "${{ secrets.ARGOCD_CI_TOKEN }}" \
+            --insecure \
+            --grpc-web
+
+          echo "Syncing demo app..."
           argocd app sync demo
