@@ -42,4 +42,3 @@ jobs:
           # Use any username, token is what matters
           argocd login ${{ secrets.ARGOCD_SERVER }} --username ci-user --password ${{ secrets.ARGOCD_CI_TOKEN }} --insecure --grpc-web
           argocd app sync demo-app
-
