@@ -50,7 +50,6 @@ jobs:
             --insecure \
             --grpc-web
 
-          echo "Syncing demo app..."
+          echo "Syncing Argo CD application..."
           argocd app sync demo
 
-          argocd app sync demo
